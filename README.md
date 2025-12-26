@@ -2,7 +2,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-2024.XXXXX-b31b1b.svg)](https://arxiv.org/)
+[![arXiv](https://img.shields.io/badge/arXiv-2026.XXXXX-b31b1b.svg)](https://arxiv.org/)
 
 Official implementation of **"Data-Centric Collaborative Adaptation for Multi-Robot Systems with Asymmetric Environmental Knowledge"**.
 
@@ -36,7 +36,7 @@ DC-Ada is a **communication-minimal** framework for adapting heterogeneous multi
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/dc-ada.git
+git clone https://github.com/alqithami/dc-ada.git
 cd dc-ada
 
 # Create virtual environment (recommended)
@@ -250,8 +250,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- This work was supported by [Funding Agency]
-- We thank the reviewers for their constructive feedback
+- This work recieved no external supported or funding.
+- We thank the reviewers for their constructive feedback.
 
 ## Contact
 
