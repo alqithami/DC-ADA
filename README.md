@@ -238,9 +238,9 @@ If you find this work useful, please cite:
 @article{dcada2024,
   title={Data-Centric Collaborative Adaptation for Multi-Robot Systems 
          with Asymmetric Environmental Knowledge},
-  author={Author Names},
-  journal={arXiv preprint arXiv:2024.XXXXX},
-  year={2024}
+  author={Saad Alqithami},
+  journal={TBD},
+  year={2025}
 }
 ```
 
@@ -255,4 +255,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For questions or issues, please open a GitHub issue or contact [email@example.com].
+For questions or issues, please open a GitHub issue or contact [salqithami@bu.edu.sa].
