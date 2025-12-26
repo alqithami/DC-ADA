@@ -1,0 +1,76 @@
+# DC-Ada Experiment Configuration
+
+# Environment settings
+environment:
+  type: "warehouse"  # Options: warehouse, search_rescue, mapping
+  num_robots: 4
+  arena_size: 20.0
+  max_steps: 500
+  num_packages: 8
+  num_obstacles: 10
+
+# Sensor configurations for heterogeneous robots
+sensor_configs:
+  robot_0:  # Full sensors, healthy
+    lidar_enabled: true
+    lidar_noise: 0.02
+    lidar_range: 5.5
+    camera_enabled: true
+    camera_noise: 0.05
+    odometry_noise: 0.01
+  
+  robot_1:  # Camera-only
+    lidar_enabled: false
+    lidar_noise: 0.0
+    lidar_range: 0.0
+    camera_enabled: true
+    camera_noise: 0.05
+    odometry_noise: 0.01
+  
+  robot_2:  # LiDAR-only, degraded
+    lidar_enabled: true
+    lidar_noise: 0.15
+    lidar_range: 3.0
+    camera_enabled: false
+    camera_noise: 0.0
+    odometry_noise: 0.02
+  
+  robot_3:  # Full sensors, noisy
+    lidar_enabled: true
+    lidar_noise: 0.08
+    lidar_range: 5.0
+    camera_enabled: true
+    camera_noise: 0.1
+    odometry_noise: 0.03
+
+# Training settings
+training:
+  num_episodes: 400
+  num_seeds: 20
+  pretrain_episodes: 50
+
+# DC-Ada hyperparameters
+dc_ada:
+  num_candidates: 16
+  perturbation_scale: 0.1
+  step_size: 0.01
+  acceptance_margin: 0.01
+
+# Policy network
+policy:
+  hidden_dim: 256
+  learning_rate: 0.0003
+
+# Baseline-specific settings
+baselines:
+  local_finetuning:
+    learning_rate: 0.0001
+  
+  gradient_finetuning:
+    learning_rate: 0.0003
+    update_frequency: 10
+
+# Logging
+logging:
+  save_frequency: 10
+  verbose: true

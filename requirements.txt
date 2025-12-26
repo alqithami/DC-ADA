@@ -1,0 +1,20 @@
+# DC-Ada Requirements
+# Python 3.8+ required
+
+# Core dependencies
+numpy>=1.21.0
+torch>=1.9.0
+gymnasium>=0.28.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.62.0
+pyyaml>=6.0
+scipy>=1.7.0
+
+# Optional: for advanced experiments
+# pybullet>=3.2.0  # For physics simulation
+# tensorboard>=2.10.0  # For logging
