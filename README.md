@@ -8,9 +8,16 @@ This repository contains the **complete experimental pipeline** for the paper:
 
 **DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams**
 
+---
+
 ## Overview
 
 DC-Ada targets a practical deployment regime: a **shared policy is pretrained under nominal sensing and kept frozen**, while each robot **adapts only a compact observation transform** to mitigate performance degradation under heterogeneous sensing (missing modalities, reduced range, altered resolution). Adaptation is **reward-only**, **gradient-free**, and **communication-minimal** (scalar team return per rollout).
+
+<p align="center">
+  <img src="figures/simulation_environment.png" width="600" alt="Simulation Environment">
+</p>
+
 ---
 
 ## Highlights
