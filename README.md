@@ -1,248 +1,311 @@
-# DC-Ada: Data-Centric Collaborative Adaptation for Multi-Robot Systems
+# DC-Ada: Reward-Only Decentralized Sensor Adaptation for Heterogeneous Multi-Robot Teams
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2026.XXXXX-b31b1b.svg)](https://arxiv.org/)
 
-Official implementation of **"Data-Centric Collaborative Adaptation for Multi-Robot Systems with Asymmetric Environmental Knowledge"**.
+This repository contains the **complete experimental pipeline** for the paper:
+
+**DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams**
 
 ## Overview
 
-DC-Ada is a **communication-minimal** framework for adapting heterogeneous multi-robot teams to new environments. Instead of fine-tuning policy parameters (which requires expensive gradient computation and high-bandwidth communication), DC-Ada learns lightweight **data transformation layers** that adapt each robot's sensor observations to work optimally with a frozen shared policy.
+DC-Ada targets a practical deployment regime: a **shared policy is pretrained under nominal sensing and kept frozen**, while each robot **adapts only a compact observation transform** to mitigate performance degradation under heterogeneous sensing (missing modalities, reduced range, altered resolution). Adaptation is **reward-only**, **gradient-free**, and **communication-minimal** (scalar team return per rollout).
+---
 
-<p align="center">
-  <img src="figures/simulation_environment.png" width="600" alt="Simulation Environment">
-</p>
+## Highlights
 
-### Key Features
+- **Reward-only adaptation:** no policy gradients, no privileged state, no centralized belief.
+- **Decentralized and communication-light:** no exchange of raw observations, maps, or gradients; only scalar returns (logged/broadcast).
+- **Fixed observation interface across heterogeneity levels:** prevents checkpoint incompatibility and confounded comparisons.
+- **Reproducible sweeps:** deterministic seeding and Common Random Numbers (CRN) for low-variance candidate evaluation.
+- **Portable simulator:** lightweight multi-robot 2D environments implemented in pure NumPy (no PyBullet).
 
-- **Communication-Minimal**: Only broadcasts a single scalar (team reward) per episode (~0.133 bytes/sec)
-- **Gradient-Free**: Uses zeroth-order optimization, enabling adaptation on robots without autodiff capabilities
-- **Heterogeneous Sensors**: Handles robots with different sensor configurations (LiDAR, camera, degraded sensors)
-- **Theoretical Guarantees**: Provably non-decreasing expected reward under mild Lipschitz assumptions
+---
+
+## Repository layout
+
+```
+.
+├── configs/                 # YAML configs (default + strong/extended)
+├── scripts/
+│   ├── smoke_test.py        # Quick sanity checks (recommended first)
+│   ├── pretrain_policy.py   # Shared-policy pretraining (per environment)
+│   ├── run_experiment.py    # Main experiment runner (writes a single JSON)
+│   ├── generate_figures.py  # Plotting + LaTeX table generation from JSON
+│   ├── validate_results.py  # Validates completeness/errors in a results JSON
+│   └── run_sanity_checks.py # Additional checks (optional)
+├── src/
+│   ├── envs/                # Warehouse / Search&Rescue / Mapping environments
+│   ├── agents/              # Shared policy, transforms, methods/baselines
+│   └── utils/               # Seeding, logging, utilities
+├── run_all.sh               # End-to-end pipeline: pretrain → sweep → figures
+├── requirements.txt
+└── LICENSE
+```
+
+Outputs produced by the pipeline:
+- `checkpoints/` — pretrained shared policies (`*.pth`)
+- `results/` — consolidated results JSON (`results_YYYYMMDD_HHMMSS.json`)
+- `figures/` — generated plots + LaTeX table (`results_table.tex`)
+
+---
 
 ## Installation
 
 ### Requirements
-
-- Python 3.8+
-- PyTorch 1.9+
-- NumPy
-- Gymnasium
-- Matplotlib (for visualization)
-- tqdm
+- Python **3.8+**
+- CPU-only is sufficient (PyTorch is used for the policy/transform networks).
 
 ### Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/alqithami/dc-ada.git
-cd dc-ada
+git clone https://github.com/alqithami/DC-ADA.git
+cd DC-ADA
 
-# Create virtual environment (recommended)
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Quick Start
+---
 
-### Run a Quick Experiment
+## Quick start (recommended)
 
-```bash
-# Run a quick validation experiment (5 seeds, 100 episodes)
-python scripts/run_quick_experiment.py
-```
-
-### Run Full Experiments
+### 1) Verify the installation
 
 ```bash
-# Run full experiments (20 seeds, 400 episodes)
-python scripts/run_experiment.py --env warehouse --episodes 400 --seeds 20
-
-# Run on different environments
-python scripts/run_experiment.py --env search_rescue --episodes 400 --seeds 20
-python scripts/run_experiment.py --env mapping --episodes 400 --seeds 20
+python scripts/smoke_test.py
 ```
 
-### Generate Figures
+### 2) Run the full pipeline (default budget)
 
 ```bash
-# Generate publication-quality figures from results
-python scripts/generate_figures.py --results results/your_experiment_dir
+chmod +x run_all.sh
+./run_all.sh
 ```
 
-## Project Structure
+This performs:
+1. shared-policy pretraining (one policy per environment)
+2. the full sweep (3 envs × 5 methods × 4 H-levels × 5 seeds = 300 runs) under a matched step budget
+3. figure and table generation from the saved JSON
 
-```
-dc-ada/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── configs/
-│   └── default.yaml         # Default experiment configuration
-├── src/
-│   ├── envs/
-│   │   ├── __init__.py
-│   │   └── warehouse_env.py # Multi-robot simulation environments
-│   ├── agents/
-│   │   ├── __init__.py
-│   │   ├── policy.py        # Shared policy and transformation layers
-│   │   └── methods.py       # DC-Ada and baseline implementations
-│   └── utils/
-│       └── __init__.py
-├── scripts/
-│   ├── run_experiment.py    # Full experiment runner
-│   ├── run_quick_experiment.py  # Quick validation runner
-│   └── generate_figures.py  # Figure generation script
-├── results/                  # Experiment results (generated)
-├── figures/                  # Generated figures
-└── logs/                     # Training logs
+### 3) Run the **extended/strong** sweep (paper-grade budget)
+
+The repository includes an extended configuration:
+
+```bash
+CONFIG=configs/strong.yaml ./run_all.sh
 ```
 
-## Environments
+`configs/strong.yaml` uses a larger environment-step budget per run (e.g., 200k) and stronger adaptation settings while keeping comparisons budget-matched.
 
-### 1. Warehouse Navigation
+---
 
-A package delivery task where 4 heterogeneous robots must pick up packages and deliver them to designated zones while avoiding obstacles and collisions.
+## Running a smaller targeted experiment
 
-**Robot Configurations:**
-| Robot | LiDAR | Camera | Condition |
-|-------|-------|--------|-----------|
-| A | ✓ (5.5m range) | ✓ | Healthy |
-| B | ✗ | ✓ | Camera-only |
-| C | ✓ (3.0m range) | ✗ | Degraded LiDAR |
-| D | ✓ (5.0m range) | ✓ | High noise |
+To run a smaller sweep without editing YAML, use `run_experiment.py` directly:
 
-**Reward Function:**
-```
-R = 10 × (packages delivered) - 0.01 × (time steps) - 0.5 × (collisions)
-```
-
-### 2. Search & Rescue
-
-Robots must locate and identify victims (stationary targets) scattered across the environment.
-
-### 3. Collaborative Mapping
-
-Robots explore an unknown environment to build a shared occupancy map, maximizing coverage while minimizing overlap.
-
-## Methods
-
-### DC-Ada (Ours)
-
-Data-Centric Decentralized Adaptation with zeroth-order optimization:
-
-```python
-from src.agents.methods import DCAdaMethod
-
-method = DCAdaMethod(
-    num_robots=4,
-    shared_policy=pretrained_policy,
-    num_candidates=16,        # Candidates per robot per round
-    perturbation_scale=0.1,   # Perturbation magnitude
-    step_size=0.01,           # Update step size
-    acceptance_margin=0.01    # Minimum improvement threshold
-)
+```bash
+# Example: 2 methods on mapping, H0–H3, with 3 seeds and a 50k step budget
+python scripts/run_experiment.py \
+  --env mapping \
+  --methods shared_policy dc_ada \
+  --heterogeneity 0 1 2 3 \
+  --seeds 3 \
+  --budget 50000 \
+  --output results
 ```
 
-### Baselines
+Notes:
+- `--seeds K` means seeds `{0, 1, ..., K-1}` (for reproducibility).
+- Budget is counted in **environment steps** (one step advances all robots jointly).
 
-1. **Shared Policy**: Frozen shared policy with no adaptation
-2. **Random Perturbation**: Random transformation updates (ablation)
-3. **Local Fine-Tuning**: Each robot fine-tunes its own policy copy
-4. **Gradient-Based Fine-Tuning**: Centralized gradient aggregation
+---
 
-## Results
+## Environments, success conditions, and progress metrics
 
-### Main Results (Warehouse Environment)
+The simulator is a lightweight 2D multi-robot environment suite. Each episode runs for up to `max_steps` with early termination on success.
 
-| Method | Success Rate (%) | Team Score | Communication |
-|--------|-----------------|------------|---------------|
-| Shared Policy | 12.3 ± 8.1 | -45.2 ± 12.3 | 0 bytes/sec |
-| Random Perturbation | 15.7 ± 9.2 | -38.4 ± 14.1 | 0.133 bytes/sec |
-| Local Fine-Tuning | 28.4 ± 11.3 | -22.1 ± 9.8 | 0 bytes/sec |
-| Gradient Fine-Tuning | 45.2 ± 13.7 | 12.3 ± 15.2 | ~50 KB/sec |
-| **DC-Ada (Ours)** | **67.8 ± 9.4** | **38.5 ± 11.2** | **0.133 bytes/sec** |
+Success conditions are **explicit** and configurable in YAML (e.g., `configs/default.yaml`):
 
-### Learning Curves
+- **Warehouse** (`WarehouseEnv`)
+  - progress: `delivered_count`, `delivery_ratio`
+  - success: `delivered_count >= target_deliveries`
 
-<p align="center">
-  <img src="figures/learning_curves_episode_scores.png" width="600" alt="Learning Curves">
-</p>
+- **Search & Rescue** (`SearchRescueEnv`)
+  - progress: `rescued_count`, `rescue_ratio` (and `found_*` for discovery)
+  - success: `rescued_count >= target_rescues`
 
-### Ablation Study
+- **Collaborative Mapping** (`CollaborativeMappingEnv`)
+  - progress: `coverage`
+  - success: `coverage >= target_coverage`
 
-<p align="center">
-  <img src="figures/ablation_barplot.png" width="500" alt="Ablation Study">
-</p>
+All episode-level counters (including targets) are saved into the results JSON under `episode_results`, enabling **threshold sensitivity** analyses without re-running experiments.
+
+---
+
+## Methods (DC-Ada + baselines)
+
+The pipeline compares five methods:
+
+| Method | Name in code/config | Summary |
+|---|---|---|
+| Shared Policy | `shared_policy` | Frozen shared policy, no adaptation |
+| DC-Ada (ours) | `dc_ada` | Reward-only, per-robot interface adaptation (accept/reject random search with CRN) |
+| Random Perturbation | `random_perturbation` | Same transform module, random updates without selection |
+| Local Fine-Tuning | `local_finetuning` | Gradient-based updates of transform parameters (shared policy frozen) |
+| Observation Normalization | `obs_normalization` | Running mean/variance normalization on the fixed-layout observation |
+
+### DC-Ada update rule (accept/reject, best-of-**M**)
+This repository implements a conservative accept/reject variant:
+
+1. Every `K` episodes, for each robot:
+2. Run a **baseline** truncated rollout (`T_c`) under CRN.
+3. Sample `M` perturbations and evaluate each candidate under the **same seed** (CRN).
+4. Apply the best perturbation only if it improves baseline return by a margin `τ`.
+
+See `src/agents/methods.py` (`DCADAMethod`) for the exact implementation.
+
+---
+
+## Reproducing paper figures and tables
+
+### Generate plots + LaTeX table from a results JSON
+After running experiments, you will have a consolidated results file such as:
+`results/results_YYYYMMDD_HHMMSS.json`
+
+Generate the standard paper plots:
+
+```bash
+python scripts/generate_figures.py \
+  --results results/results_YYYYMMDD_HHMMSS.json \
+  --output figures/
+```
+
+This writes:
+- `figures/performance_{warehouse,search_rescue,mapping}.pdf`
+- `figures/scaling_{warehouse,search_rescue,mapping}.pdf`
+- `figures/success_rate_{warehouse,search_rescue,mapping}.pdf`
+- `figures/heatmap_reward_{warehouse,search_rescue,mapping}.pdf`
+- `figures/heatmap_success_{warehouse,search_rescue,mapping}.pdf`
+- `figures/results_table.tex` (LaTeX table for reward)
+
+### Validate results completeness (recommended for long sweeps)
+```bash
+python scripts/validate_results.py --results results/results_YYYYMMDD_HHMMSS.json
+```
+
+### Optional: threshold-sensitivity plots (Fig.-8 style)
+The default `generate_figures.py` script produces the main plots, but threshold-sensitivity curves can be generated directly from the saved `episode_results`. Below is a minimal example that outputs three PDFs under `figures/` using Matplotlib only:
+
+```bash
+python - << 'PY'
+import json, os
+import numpy as np
+import matplotlib.pyplot as plt
+
+RESULTS = "results/results_YYYYMMDD_HHMMSS.json"  # <-- set this
+OUTDIR = "figures"
+os.makedirs(OUTDIR, exist_ok=True)
+
+with open(RESULTS, "r") as f:
+    data = json.load(f)
+
+def curve(env, key, thresholds, h=3):
+    # Aggregates across seeds per method at a fixed heterogeneity level.
+    curves = {}
+    for exp in data["experiments"]:
+        if exp["env_name"] != env or exp["heterogeneity_level"] != h:
+            continue
+        m = exp["method_name"]
+        vals = [ep.get(key, None) for ep in exp["episode_results"]]
+        vals = [v for v in vals if v is not None]
+        if not vals:
+            continue
+        vals = np.asarray(vals, dtype=float)
+        sr = [(vals >= t).mean() for t in thresholds]
+        curves.setdefault(m, []).append(sr)
+    # mean over seeds
+    out = {}
+    for m, arr in curves.items():
+        A = np.asarray(arr, dtype=float)
+        out[m] = A.mean(axis=0)
+    return out
+
+# Warehouse: delivered_count >= k
+wh_thresh = np.arange(0, 4, 1)  # k = 0..3
+wh = curve("warehouse", "delivered_count", wh_thresh, h=3)
+
+# Search&Rescue: rescued_count >= k
+sr_thresh = np.arange(0, 4, 1)  # k = 0..3
+sr = curve("search_rescue", "rescued_count", sr_thresh, h=3)
+
+# Mapping: coverage >= tau
+mp_thresh = np.linspace(0.4, 0.9, 26)
+mp = curve("mapping", "coverage", mp_thresh, h=3)
+
+def plot_curves(curves, x, xlabel, outname, title):
+    plt.figure()
+    for m, y in sorted(curves.items()):
+        plt.plot(x, y, label=m)
+    plt.xlabel(xlabel)
+    plt.ylabel("Success rate")
+    plt.title(title)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTDIR, outname))
+    plt.close()
+
+plot_curves(wh, wh_thresh, "k (deliveries)", "threshold_sensitivity_warehouse_H3.pdf",
+            "Warehouse H3: delivered ≥ k")
+plot_curves(sr, sr_thresh, "k (rescues)", "threshold_sensitivity_search_rescue_H3.pdf",
+            "Search&Rescue H3: rescued ≥ k")
+plot_curves(mp, mp_thresh, "τ (coverage)", "threshold_sensitivity_mapping_H3.pdf",
+            "Mapping H3: coverage ≥ τ")
+
+print("Saved threshold sensitivity plots to", OUTDIR)
+PY
+```
+
+---
 
 ## Configuration
 
-Edit `configs/default.yaml` to customize experiments:
+Primary knobs (see `configs/default.yaml` and `configs/strong.yaml`):
 
-```yaml
-# Environment settings
-environment:
-  type: "warehouse"
-  num_robots: 4
-  arena_size: 20.0
-  max_steps: 500
+- `total_budget`: total environment-step budget per run (budget-matched across methods)
+- `max_steps`: episode horizon
+- `num_seeds`, `heterogeneity_levels`, `methods`, `environments`
+- Environment thresholds: `warehouse.target_deliveries`, `search_rescue.target_rescues`, `mapping.target_coverage`
+- DC-Ada hyperparameters: `num_candidates`, `noise_scale`, `step_size`, `acceptance_margin`, `adaptation_interval`, `candidate_rollout_fraction`
 
-# DC-Ada hyperparameters
-dc_ada:
-  num_candidates: 16
-  perturbation_scale: 0.1
-  step_size: 0.01
-  acceptance_margin: 0.01
+---
 
-# Training settings
-training:
-  num_episodes: 400
-  num_seeds: 20
-```
+## Troubleshooting
 
-## Reproducibility
+- **Success rate appears low in Warehouse:** warehouse success is thresholded (e.g., 2 deliveries). Under severe heterogeneity, success can be rare; use reward/progress metrics and threshold sensitivity rather than relying on a single strict threshold.
+- **`ModuleNotFoundError: cfdefect`**: this module is not part of DC-Ada; if you see it, it came from running an unrelated command after the pipeline finished.
+- **Mac/Apple Silicon:** use a fresh venv and install from `requirements.txt`. CPU-only runs are supported.
 
-To reproduce the paper results:
-
-```bash
-# Set random seed for reproducibility
-export PYTHONHASHSEED=0
-
-# Run all experiments
-for env in warehouse search_rescue mapping; do
-    python scripts/run_experiment.py --env $env --episodes 400 --seeds 20
-done
-
-# Generate all figures
-python scripts/generate_figures.py --results results/
-```
-
-### Reproducibility Checklist
-
-| Item | Status |
-|------|--------|
-| Code availability | ✓ |
-| Random seeds fixed | ✓ (20 seeds) |
-| Hyperparameters documented | ✓ |
-| Hardware requirements | CPU only |
-| Expected runtime | ~4 hours (full) |
+---
 
 ## Citation
 
-If you find this work useful, please cite:
+If you use this codebase, please cite the paper:
 
 ```bibtex
-@article{dcada2024,
-  title={Data-Centric Collaborative Adaptation for Multi-Robot Systems 
-         with Asymmetric Environmental Knowledge},
-  author={Saad Alqithami},
-  journal={TBD},
-  year={2025}
+@article{alqithami_dcada_2026,
+  title   = {DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams},
+  author  = {Saad Alqithami},
+  journal = {IEEE Access},
+  note    = {Under review},
+  year    = {2026}
 }
 ```
+
+---
 
 ## License
 
