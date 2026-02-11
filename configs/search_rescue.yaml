@@ -1,0 +1,49 @@
+# DC-Ada Single-Environment Configuration: Search & Rescue
+
+# Environments to test
+environments:
+  - search_rescue
+
+# Methods to compare
+methods:
+  - shared_policy
+  - dc_ada
+  - random_perturbation
+  - local_finetuning
+  - obs_normalization
+
+# Heterogeneity levels (0=homogeneous, 3=severe heterogeneity)
+heterogeneity_levels:
+  - 0
+  - 1
+  - 2
+  - 3
+
+# Number of random seeds
+num_seeds: 5
+
+# Total environment steps budget (same for all methods)
+total_budget: 50000
+
+# Optional: Pre-trained shared policy checkpoint
+pretrained_policies:
+  search_rescue: checkpoints/search_rescue_policy.pth
+
+# Environment settings
+num_robots: 4
+max_steps: 500
+
+# Environment-specific parameters
+search_rescue:
+  num_victims: 6
+  target_rescues: 2
+
+# DC-Ada specific settings
+dc_ada:
+  num_candidates: 5
+  noise_scale: 0.01
+  latent_dim: 32
+  adaptation_interval: 10
+
+# Output settings
+output_dir: results

@@ -1,0 +1,49 @@
+# DC-Ada Single-Environment Configuration: Collaborative Mapping
+
+# Environments to test
+environments:
+  - mapping
+
+# Methods to compare
+methods:
+  - shared_policy
+  - dc_ada
+  - random_perturbation
+  - local_finetuning
+  - obs_normalization
+
+# Heterogeneity levels (0=homogeneous, 3=severe heterogeneity)
+heterogeneity_levels:
+  - 0
+  - 1
+  - 2
+  - 3
+
+# Number of random seeds
+num_seeds: 5
+
+# Total environment steps budget (same for all methods)
+total_budget: 50000
+
+# Optional: Pre-trained shared policy checkpoint
+pretrained_policies:
+  mapping: checkpoints/mapping_policy.pth
+
+# Environment settings
+num_robots: 4
+max_steps: 500
+
+# Environment-specific parameters
+mapping:
+  grid_resolution: 20
+  target_coverage: 0.75
+
+# DC-Ada specific settings
+dc_ada:
+  num_candidates: 5
+  noise_scale: 0.01
+  latent_dim: 32
+  adaptation_interval: 10
+
+# Output settings
+output_dir: results

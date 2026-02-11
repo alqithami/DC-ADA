@@ -1,0 +1,59 @@
+environments:
+- warehouse
+- search_rescue
+- mapping
+methods:
+- shared_policy
+- dc_ada
+- random_perturbation
+- local_finetuning
+- obs_normalization
+heterogeneity_levels:
+- 0
+- 1
+- 2
+- 3
+num_seeds: 5
+total_budget: 200000
+pretrained_policies:
+  warehouse: checkpoints/warehouse_policy.pth
+  search_rescue: checkpoints/search_rescue_policy.pth
+  mapping: checkpoints/mapping_policy.pth
+num_robots: 4
+max_steps: 500
+warehouse:
+  num_packages: 8
+  target_deliveries: 2
+search_rescue:
+  num_victims: 6
+  target_rescues: 2
+mapping:
+  grid_resolution: 20
+  target_coverage: 0.75
+dc_ada:
+  num_candidates: 8
+  noise_scale: 0.05
+  step_size: 1.0
+  acceptance_margin: 0.0
+  adaptation_interval: 3
+  candidate_rollout_fraction: 0.25
+  deterministic_rollouts: true
+  latent_dim: 32
+  transform_init_std: 0.0
+random_perturbation:
+  noise_scale: 0.05
+  perturbation_interval: 3
+  latent_dim: 32
+  transform_init_std: 0.0
+local_finetuning:
+  learning_rate: 0.0003
+  finetune_interval: 1
+  finetune_steps: 1
+  training_rollout_fraction: 0.25
+  deterministic_eval: true
+  gamma: 0.99
+  entropy_coef: 0.01
+  grad_clip: 1.0
+  latent_dim: 32
+  transform_init_std: 0.0
+output_dir: results
