@@ -15,7 +15,7 @@ This repository contains the **complete experimental pipeline** for the paper:
 DC-Ada targets a practical deployment regime: a **shared policy is pretrained under nominal sensing and kept frozen**, while each robot **adapts only a compact observation transform** to mitigate performance degradation under heterogeneous sensing (missing modalities, reduced range, altered resolution). Adaptation is **reward-only**, **gradient-free**, and **communication-minimal** (scalar team return per rollout).
 
 <p align="center">
-  <video src="figures/DC_Ada_Final_Video.mp4" width="600" controls muted autoplay loop>
+  <video src="[figures/DC_Ada_Final_Video.mp4](https://github.com/alqithami/DC-ADA/blob/main/figures/DC_Ada_Final_Video.mp4)" width="600" controls muted autoplay loop>
     Your browser does not support the video tag.
   </video>
 </p>
