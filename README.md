@@ -20,6 +20,11 @@ DC-Ada targets a practical deployment regime: a **shared policy is pretrained un
   </video>
 </p>
 <p align="center">
+  <video src="https://raw.githubusercontent.com/alqithami/DC-ADA/blob/main/figures/DC_Ada_Final_Video.mp4" width="600" controls muted autoplay loop>
+    Your browser does not support the video tag.
+  </video>
+</p>
+<p align="center">
   <img src="figures/simulation_environment.png" width="500" alt="Simulation Environment">
 </p>
 
