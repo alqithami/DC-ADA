@@ -328,10 +328,6 @@ If you use this codebase, please cite the paper:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-
-- This work recieved no external supported or funding.
-- We thank the reviewers for their constructive feedback.
 
 ## Contact
 
