@@ -25,7 +25,7 @@ DC-Ada targets a practical deployment regime: a **shared policy is pretrained un
   </video>
 </p>
 <p align="center">
-  <img src="figures/Infographics.png" width="500" alt="Simulation Environment">
+  <img src="figures/Infographics.png" width="750" alt="Simulation Environment">
 </p>
 
 ---
