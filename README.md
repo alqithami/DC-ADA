@@ -331,4 +331,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For questions or issues, please open a GitHub issue or contact owner.
+For questions or issues, please open a GitHub issue or contact the project owner.
