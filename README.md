@@ -313,12 +313,11 @@ Primary knobs (see `configs/default.yaml` and `configs/strong.yaml`):
 If you use this codebase, please cite the paper:
 
 ```bibtex
-@article{alqithami_dcada_2026,
-  title   = {DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams},
-  author  = {Saad Alqithami},
-  journal = {TBD},
-  note    = {Under review},
-  year    = {2026}
+@article{alqithami2026dc,
+  title={DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams},
+  author={Alqithami, Saad},
+  journal={arXiv preprint arXiv:2604.03905},
+  year={2026}
 }
 ```
 
