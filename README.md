@@ -316,8 +316,9 @@ If you use this codebase, please cite the paper:
 @article{alqithami2026dc,
   title={DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams},
   author={Alqithami, Saad},
-  journal={arXiv preprint arXiv:2604.03905},
-  year={2026}
+  journal={IEEE ACCESS},
+  year={2026},
+  DOI={10.1109/ACCESS.2026.3687163}
 }
 ```
 
