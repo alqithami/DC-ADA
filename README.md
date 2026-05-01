@@ -1,4 +1,4 @@
-# DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams
+# DC-Ada
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -6,7 +6,7 @@
 
 This repository contains the **complete experimental pipeline** for the paper:
 
-**DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams**
+**DC-Ada: Reward-Only Decentralized Sensor Adaptation for Heterogeneous Multi-Robot Teams**
 
 ---
 
@@ -314,7 +314,7 @@ If you use this codebase, please cite the paper:
 
 ```bibtex
 @article{alqithami2026dc,
-  title={DC-Ada: Reward-Only Decentralized Observation-Interface Adaptation for Heterogeneous Multi-Robot Teams},
+  title={DC-Ada: Reward-Only Decentralized Sensor Adaptation for Heterogeneous Multi-Robot Teams},
   author={Alqithami, Saad},
   journal={IEEE ACCESS},
   year={2026},
